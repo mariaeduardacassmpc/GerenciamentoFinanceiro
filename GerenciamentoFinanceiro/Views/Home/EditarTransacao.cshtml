@@ -1,0 +1,18 @@
+﻿@model Financeiro
+
+<div class="container" style="max-width: 1500px; margin-top: 60px;">
+    <div class="card shadow rounded-4">
+        <div class="card-body p-4">
+            <h2 class="text-center mb-4">Editar Transação</h2>
+            <form asp-action="EditarTransacao" asp-controller="Home" method="post">
+                <input type="hidden" asp-for="Id" />
+                <!-- Repita os campos igual ao AdicionarTransacao -->
+                <!-- ... -->
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100 mb-2">Salvar</button>
+                    <a asp-action="Index" class="btn btn-danger w-100 mb-2">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

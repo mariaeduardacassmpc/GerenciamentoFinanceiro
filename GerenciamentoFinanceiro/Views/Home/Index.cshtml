@@ -2,24 +2,21 @@
 
 
 <div class="row mt-5">
-
-    <div class="text-center">
-
-        <a asp-action="AdicionarTransacao" asp-controller="Home" class="btn btn-success">Adicionar - Transação</a>
-        <a asp-action="AdicionarCategoria" asp-controller="Home" class="btn btn-warning">Adicionar - Categoria</a>
-        <a asp-action="SomatoriaValores" asp-controller="Home" class="btn btn-info">Análise - Valores</a>
-
+    <div class="text-center mt-3">
+        <a asp-action="AdicionarTransacao" asp-controller="Home"  class="btn btn-success me-2" >Adicionar - Transação</a>
+        <a asp-action="AdicionarCategoria" asp-controller="Home" class="btn btn-warning me-2">Adicionar - Categoria</a>
+        <a asp-action="SomatoriaValores" asp-controller="Home" class="btn btn-primary">Análise - Valores</a>
     </div>
 
     <div class="col-md-2">
-
         <form asp-action="Filtrar" asp-controller="Home" method="post">
             <div class="mb-3">
 
                 <label class="form-label">Categoria:</label>
-                <select name="filtro"
-                        class="form-select"
-                        asp-items="@(new SelectList(ViewBag.Categorias,"CategoriaId","Nome",ViewBag.Filtros.CategoriaId))">
+                <select
+                    name="filtro"
+                    class="form-select"
+                    asp-items="@(new SelectList(ViewBag.Categorias,"CategoriaId","Nome",ViewBag.Filtros.CategoriaId))">
 
                     <option value="todos">Todos</option>
 
@@ -48,17 +45,15 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn-primary btn w-100 mb-2">Filtrar</button>
-            <a asp-action="Index" asp-route-id="" class="btn btn-primary w-100">Limpar</a>
+            <button type="submit" class="btn-primary btn w-100 mb-2" >Filtrar</button>
+            <a asp-action="Index" asp-route-id="" class="btn btn-primary w-100" >Limpar</a>
         </form>
     </div>
 
     <div class="col-md-10">
-
-
-        <table class="table table-light table-bordered mt-2">
-            <thead>
-                <tr>
+       <table class="table table-bordered bg-white ms-4 mt-4">
+           <thead>
+               <tr>
                     <th>Descrição</th>
                     <th>Categoria</th>
                     <th>Data da Operação</th>
@@ -66,14 +61,14 @@
                     <th>Valor</th>
                     <th class="w-25"></th>
 
-                </tr>
-            </thead>
-            <tbody>
+               </tr>
+           </thead>
+           <tbody>
 
 
                 @foreach (Financeiro financa in Model)
                 {
-
+                    
                     <tr>
                         <td>@financa.Descricao</td>
                         <td>@financa.Categoria.Nome</td>
@@ -81,26 +76,24 @@
 
                         @if (financa.transacao.Nome == "Ganho")
                         {
-                            <td style="color:green; font-weight:bold">
-                                @financa.transacao.Nome
+                            <td style="color:green; font-weight:bold">@financa.transacao.Nome
                             </td>
                         }
                         else
                         {
-                            <td style="color:red; font-weight:bold">
-                                @financa.transacao.Nome
+                            <td style="color:red; font-weight:bold">@financa.transacao.Nome
                             </td>
                         }
 
                         <td>R$ @financa.Valor.ToString("F")</td>
                         <td>
+                            <a asp-action="EditarTransacao" asp-controller="Home" asp-route-id="@financa.Id" class="btn btn-primary me-2">Editar</a>
                             <a asp-action="RemoverTransacao" asp-controller="Home" asp-route-id="@financa.Id" class="btn btn-danger">Remover</a>
                         </td>
-
                     </tr>
-                 }
-            </tbody>
-        </table>
-    </div>
+                }
 
+           </tbody>
+       </table>
+    </div>
 </div>
