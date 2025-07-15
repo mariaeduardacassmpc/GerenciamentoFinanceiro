@@ -6,13 +6,48 @@
             <h2 class="text-center mb-4">Editar Transação</h2>
             <form asp-action="EditarTransacao" asp-controller="Home" method="post">
                 <input type="hidden" asp-for="Id" />
-                <!-- Repita os campos igual ao AdicionarTransacao -->
-                <!-- ... -->
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Descrição:</label>
+                    <input class="form-control" type="text" asp-for="Descricao" placeholder="Digite a descrição" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Valor (R$):</label>
+                        <input class="form-control" type="number" asp-for="Valor" placeholder="Digite o valor" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Categoria:</label>
+                        <select asp-for="CategoriaId"
+                                class="form-select"
+                                asp-items="@(new SelectList(ViewBag.Categorias, "CategoriaId", "Nome"))">
+                            <option value="">Selecione a categoria da transação</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Data da Operação:</label>
+                        <input class="form-control" type="date" asp-for="DataDaOperacao" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Transação:</label>
+                        <select class="form-select"
+                                asp-for="TransacaoId"
+                                asp-items="@(new SelectList(ViewBag.Transacoes, "TransacaoId", "Nome"))">
+                            <option value="">Selecione o tipo da transação</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary w-100 mb-2">Salvar</button>
+                    <button type="submit" class="btn btn-success w-100 mb-2">Salvar</button>
                     <a asp-action="Index" class="btn btn-danger w-100 mb-2">Cancelar</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
