@@ -87,7 +87,7 @@ namespace GerenciamentoFinanceiro.Controllers
             _context.Remove(financa);
             _context.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("AdicionarCategoria");
         }
 
         public IActionResult EditarTransacao(int id)
@@ -115,7 +115,8 @@ namespace GerenciamentoFinanceiro.Controllers
 
             ViewBag.Categorias = _context.Categorias.ToList();
             ViewBag.Transacoes = _context.Transacoes.ToList();
-            return View(financeiro);
+            
+            return RedirectToAction("AdicionarCategoria");
         }
 
         public IActionResult AdicionarCategoria()
@@ -138,7 +139,7 @@ namespace GerenciamentoFinanceiro.Controllers
             ViewBag.Categorias = _context.Categorias.ToList();
             ViewBag.Transacoes = _context.Transacoes.ToList();
 
-            return View(categoria);
+            return RedirectToAction("AdicionarCategoria");
         }
 
         [HttpPost]
@@ -151,7 +152,7 @@ namespace GerenciamentoFinanceiro.Controllers
             }
 
             ViewBag.Categorias = _context.Categorias.ToList();
-            return View(categoria);
+            return RedirectToAction("AdicionarCategoria" );
         }
 
         public IActionResult RemoverCategoria(string id)
@@ -162,7 +163,7 @@ namespace GerenciamentoFinanceiro.Controllers
             if (categoriaEmUso)
             {
                 TempData["Erro"] = "Não é possível excluir a categoria pois existem transações vinculadas a ela.";
-                return RedirectToAction("Index");
+                return RedirectToAction("AdicionarCategoria");
             }
 
             if (categoria != null)
@@ -175,10 +176,8 @@ namespace GerenciamentoFinanceiro.Controllers
             return NotFound();
         }
 
-
         public IActionResult SomatoriaValores()
         {
-
             var resultados = from g in _context.Financas
                                         .Include(x => x.Categoria)
                                         .Include(x => x.transacao)
@@ -194,74 +193,39 @@ namespace GerenciamentoFinanceiro.Controllers
                              };
 
             var ganhos = _context.Financas
-    .Include(x => x.Categoria)
-    .Include(x => x.transacao)
-    .Where(x => x.TransacaoId == "ganho")
-    .ToList();
-
-            double totalGanhos = ganhos.Any() ? ganhos.Sum(x => x.Valor) : 0;
-            ViewBag.GanhosDebug = ganhos.Select(x => $"{x.Id}: {x.Valor}").ToList();
+                            .Include(x => x.Categoria)
+                            .Include(x => x.transacao)
+                            .Where(x => x.TransacaoId == "ganho")
+                            .Sum(x => x.Valor);
 
             var gastos = _context.Financas
-                .Include(x => x.Categoria)
-                .Include(x => x.transacao)
-                .Where(x => x.TransacaoId == "gasto")
-                .Sum(x => x.Valor);
+                            .Include(x => x.Categoria)
+                            .Include(x => x.transacao)
+                            .Where(x => x.TransacaoId == "gasto")
+                            .Sum(x => x.Valor);
 
-            var diferenca = totalGanhos - gastos;
 
-     //       List<RegistrosFinanceiros> registros = new List<RegistrosFinanceiros>();
-
-     //       var ganhos = _context.Financas
-     //.Include(x => x.Categoria)
-     //.Include(x => x.transacao)
-     //.Where(x => x.TransacaoId == "ganho")
-     //.ToList();
-
-     //       double totalGanhos = ganhos.Any() ? ganhos.Sum(x => x.Valor) : 0;
-     //       ViewBag.GanhosDebug = ganhos.Select(x => $"{x.Id}: {x.Valor}").ToList();
-
-     //       var gastos = _context.Financas
-     //           .Include(x => x.Categoria)
-     //           .Include(x => x.transacao)
-     //           .Where(x => x.TransacaoId == "gasto")
-     //           .Sum(x => x.Valor);
-
-     //       var diferenca = totalGanhos - gastos;
-
+            var diferenca = ganhos - gastos;
             List<RegistrosFinanceiros> registros = new List<RegistrosFinanceiros>();
 
             foreach (var resultado in resultados)
             {
-                var ganhosCategoria = _context.Financas
-                    .Where(x => x.CategoriaId == resultado.CategoriaNome && x.TransacaoId == "ganho")
-                    .Sum(x => x.Valor);
-
-                var gastosCategoria = _context.Financas
-                    .Where(x => x.CategoriaId == resultado.CategoriaNome && x.TransacaoId == "gasto")
-                    .Sum(x => x.Valor);
-
-                var diferencaCategoria = ganhosCategoria - gastosCategoria;
-
                 var registro = new RegistrosFinanceiros()
                 {
                     CategoriaNome = resultado.CategoriaNome,
                     TransacaoNome = resultado.TransacaoNome,
                     DataOperacao = resultado.DataOperacao.ToString("dd/MM/yyyy"),
                     ValorCategoria = resultado.Total.ToString("F"),
-                    Ganhos = ganhosCategoria.ToString("F"),
-                    Gastos = gastosCategoria.ToString("F"),
-                    Diferenca = diferencaCategoria.ToString("F"),
+                    Ganhos = ganhos.ToString("F"),
+                    Gastos = gastos.ToString("F"),
+                    Diferenca = diferenca.ToString("F"),
+
                 };
 
                 registros.Add(registro);
             }
 
-
-
-
             return View(registros);
-
         }
 
         [HttpPost]
@@ -276,7 +240,6 @@ namespace GerenciamentoFinanceiro.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 var categoriaBanco = new Categoria
                 {
                     CategoriaId = categoria.Nome.ToLower(),
@@ -287,8 +250,6 @@ namespace GerenciamentoFinanceiro.Controllers
                 _context.SaveChanges();
 
                 return RedirectToAction("Index");
-
-
             }
             else
             {
@@ -303,14 +264,10 @@ namespace GerenciamentoFinanceiro.Controllers
 
             if (ModelState.IsValid)
             {
-
-
                 _context.Financas.Add(financeiro);
                 _context.SaveChanges();
 
                 return RedirectToAction("Index");
-
-
             }
             else
             {
